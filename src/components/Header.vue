@@ -124,13 +124,6 @@
   </script>
   
   <style scoped>
-  body.mobile-menu-open {
-  overflow: hidden;
-}
-
-body.basket-open {
-  overflow: hidden;
-}
 .header-container {
   display: flex;
   text-align: center;
@@ -146,9 +139,9 @@ body.basket-open {
 }
 @media (max-width: 768px){
     .header-container {
-        position: fixed;
+        position: absolute;
         max-width: 375px;
-        margin: 0 auto;
+        margin: 0 auto;        
     }
 }
 
