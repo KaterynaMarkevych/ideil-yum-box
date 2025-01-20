@@ -124,52 +124,52 @@
   </script>
   
   <style scoped>
-body.mobile-menu-open {
+  body.mobile-menu-open {
   overflow: hidden;
 }
 
 body.basket-open {
   overflow: hidden;
 }
-
 .header-container {
   display: flex;
   text-align: center;
   justify-content: space-between;
   padding: 30px;
   color: #fff;
-  position: fixed;
   z-index: 4;
-  background: black;
   top: 0;
   right: 0;
-  left: 0;
-  margin-left: 0;
+  min-width: 375px;
+  max-width: 100vw;
+  margin: 0 auto;
 }
-
-@media (max-width: 1110px) {
-  .header-container {
-    position: fixed;
-  }
+@media (max-width: 768px){
+    .header-container {
+        position: fixed;
+        max-width: 375px;
+        margin: 0 auto;
+    }
 }
 
 .logo {
   z-index: 3;
   width: 75px;
   height: 49px;
+  margin-left: 40px;
 }
 
 @media (min-width: 768px) {
   .logo {
     width: 114px;
     height: 73px;
-    margin-left: 80px;
+    margin-top: -20px;
   }
 }
 
 .navigation ul {
   list-style-type: none;
-  margin: 0;
+  margin-top: -20px;
   padding: 0;
 }
 .navigation li {
@@ -205,14 +205,12 @@ body.basket-open {
   min-width: 90px;
   max-width: 127px;
   height: 27px;
-  margin-top: 30px;
-  margin-right: 60px;
 }
 
 @media (max-width: 768px) {
   .basket {
     background: black;
-    margin-left: 55%;
+    margin-left: 65%;
     z-index: 1;
     margin-bottom: 20px;
     position: fixed;
@@ -235,7 +233,7 @@ body.basket-open {
   flex-direction: column;
   padding-right: 66px;
   margin-bottom: 20px;
-  margin-top: 20%;
+  margin-top: 30%;
   flex-grow: 1;
   justify-content: flex-start;
   margin-left: 64px;
@@ -252,6 +250,8 @@ body.basket-open {
   z-index: 2;
   margin-top: 80px;
   overflow: hidden;
+  max-width: 375px;
+  margin: 0 auto;
 }
 .mobile-navigation ul {
   list-style: none;
@@ -262,7 +262,7 @@ body.basket-open {
   font-size: 24px;
   letter-spacing: 0%;
   letter-spacing: 0%;
-  margin-left: 35px;
+  margin-left: 64px;
   text-align: left;
 }
 
@@ -296,7 +296,6 @@ body.basket-open {
     display: none; /* Ховаємо мобільну навігацію */
   }
 }
-
 .info {
   list-style-type: none;
   padding-bottom: 290px;
@@ -340,13 +339,10 @@ body.basket-open {
   display: flex;
   align-items: center;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   padding: 0 10px;
-  margin-left: 86px;
-  margin-top: 40%;
+  left: 64px;
+  top: 127px;
+  bottom: 19px;
   max-width: 127px;
   height: 27px;
 }
@@ -365,7 +361,6 @@ body.basket-open {
   right: 0;
   width: 470px;
   height: 100%;
-  z-index: 3;
   background: black;
   overflow-y: auto;
 }
@@ -470,6 +465,8 @@ body.basket-open {
   text-decoration: none;
   font-size: 18px;
   text-align: left;
+  margin-left: 40px;
+  padding: 0;
 }
 
 /* Контактна інформація */
@@ -477,10 +474,7 @@ body.basket-open {
   list-style: none;
   padding: 0;
   margin: 10px 0;
-}
-
-.info ul li {
-  margin: 5px 0;
+  margin-left: 44px;
 }
 
 .info ul li a {
