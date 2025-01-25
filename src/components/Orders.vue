@@ -7,7 +7,7 @@
             <div class="order-details">
                 <p class="order-title">{{ item.title }}<br />{{ item.number }}</p>
                 <p class="order-mass">{{ item.mass }}</p>
-                <button class="order-button">{{ item.price }} грн</button>
+                <button class="order-button" @click="addToBasket(item)">{{ item.price }} грн</button>
             </div>
             </div>
         </div>
@@ -18,7 +18,7 @@
             <div class="order-details">
                 <p class="order-title">{{ item.title }}<br />{{ item.number }}</p>
                 <p class="order-mass">{{ item.mass }}</p>
-                <button class="order-button">{{ item.price }} грн</button>
+                <button class="order-button" @click="addToBasket(item)">{{ item.price }} грн</button>
             </div>
             </div>
         </div>
@@ -28,27 +28,29 @@
   <script>
   import { ref } from "vue";
   import ordersImage from "../assets/images/OrderSet.svg";
-  
+  import { inject } from 'vue';
   
   export default {
     name: "Orders",
     setup() {
+        const addToBasket = inject('addToBasket');
+        const setContent = ref([
+            { id: 1, title: "YumBox", number: "21 сет", mass: "1500 гр", price: "799", quantity: "1", image: ordersImage },
+            { id: 2, title: "YumBox", number: "21 сет", mass: "1500 гр", price: "799", quantity: "1", image: ordersImage },
+            { id: 3, title: "YumBox", number: "21 сет", mass: "1500 гр", price: "799", quantity: "1", image: ordersImage },
+            { id: 4, title: "YumBox", number: "21 сет", mass: "1500 гр", price: "799", quantity: "1", image: ordersImage },
+            { id: 5, title: "YumBox", number: "21 сет", mass: "1500 гр", price: "799", quantity: "1", image: ordersImage },
+            { id: 6, title: "YumBox", number: "21 сет", mass: "1500 гр", price: "799", quantity: "1", image: ordersImage },
+            { id: 7, title: "YumBox", number: "21 сет", mass: "1500 гр", price: "799", quantity: "1", image: ordersImage },
+            { id: 8, title: "YumBox", number: "21 сет", mass: "1500 гр", price: "799", quantity: "1", image: ordersImage },
+        ]);
   
-      const setContent = ref([
-        { id: 1, title: "YumBox", number: "21 сет", mass: "1500 гр", price: "799", quantity: "1", image: ordersImage },
-        { id: 2, title: "YumBox", number: "21 сет", mass: "1500 гр", price: "799", quantity: "1", image: ordersImage },
-        { id: 3, title: "YumBox", number: "21 сет", mass: "1500 гр", price: "799", quantity: "1", image: ordersImage },
-        { id: 4, title: "YumBox", number: "21 сет", mass: "1500 гр", price: "799", quantity: "1", image: ordersImage },
-        { id: 5, title: "YumBox", number: "21 сет", mass: "1500 гр", price: "799", quantity: "1", image: ordersImage },
-        { id: 6, title: "YumBox", number: "21 сет", mass: "1500 гр", price: "799", quantity: "1", image: ordersImage },
-        { id: 7, title: "YumBox", number: "21 сет", mass: "1500 гр", price: "799", quantity: "1", image: ordersImage },
-        { id: 8, title: "YumBox", number: "21 сет", mass: "1500 гр", price: "799", quantity: "1", image: ordersImage },
-      ]);
-  
-      return {
-        setContent
-      };
+        return {
+        setContent,
+        addToBasket
+        };
     },
+    
   };
   </script>
   

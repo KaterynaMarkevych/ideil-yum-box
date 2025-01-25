@@ -26,8 +26,8 @@
         <!-- Мобільна навігація -->
         <div v-if="menuOpen" class="mobile">
             <div @click="toggleBasket" class="info-basket">
-            <span class="basket-counter">{{ basketCount }}</span>
-            {{ totalPrice }} грн
+            <span class="basket-counter">{{ basketState.basketCount }}</span>
+            {{ basketState.totalPrice }} грн
             </div>
 
             <nav class="mobile-navigation">
@@ -65,29 +65,48 @@
         </nav>
   
         <button @click="toggleBasket" class="basket">
-          <span class="basket-counter">{{ basketCount }} </span>
-           {{ totalPrice }} грн
+          <span class="basket-counter">{{ basketState.basketCount }} </span>
+           {{ basketState.totalPrice }} грн
         </button>
       </header>
   
+        <!-- Корзина -->
       <div v-if="basketOpen">
+        <!-- Фон, що закриває корзину при кліку -->
         <Backdrop @click="toggleBasket" />
+        
         <div class="basket-container">
-          <div v-if="basketCount > 0 ">
+          <!-- Якщо є елементи в корзині -->
+          <div v-if="basketState.basketItems.length > 0">
             <button @click="toggleBasket" class="close-basket">
-              <font-awesome-icon icon="bars" color="white" size="30px" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24">
+                <path fill="#fff" d="m6.4 18.308l-.708-.708l5.6-5.6l-5.6-5.6l.708-.708l5.6 5.6l5.6-5.6l.708.708l-5.6 5.6l5.6 5.6l-.708.708l-5.6-5.6z" />
+              </svg>
             </button>
             <h2>Корзина</h2>
-            <AddedItem :updateQuantity="updateQuantity" />
+            <!-- Відображення кожного доданого елемента -->
+            <AddedItem
+        v-for="item in basketItems"
+        :key="item.id"
+        :item="item"
+        @removeItem="handleRemoveItem"
+        @updateQuantity="handleUpdateQuantity"
+      />
             <div class="order">
               <span class="delivery">Доставка</span>
               <span class="delivery-price">50 ₴</span>
-              <button class="order-button">Оформити за {{ totalPriceWithDelivery }} ₴</button>
+              <button class="order-button">
+                Оформити за {{ totalPriceWithDelivery }} ₴
+              </button>
             </div>
           </div>
+
+          <!-- Якщо корзина порожня -->
           <div v-else>
-            <button @click="toggleBasket" class="close-basket">
-              <font-awesome-icon icon="times" color="white" size="30px" />
+            <button @click="toggleBasket" class="close-basket">          
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24">
+                <path fill="#fff" d="m6.4 18.308l-.708-.708l5.6-5.6l-5.6-5.6l.708-.708l5.6 5.6l5.6-5.6l.708.708l-5.6 5.6l5.6 5.6l-.708.708l-5.6-5.6z" />
+              </svg>
             </button>
             <h2>Корзина</h2>
             <p>У вашій корзині поки порожньо.</p>
@@ -95,33 +114,100 @@
           </div>
         </div>
       </div>
-    </div>
+  </div>
 </template>
   
-  <script>
+<script>
   import logo from '../assets/images/logo.png';
   import { Icon } from "@iconify/vue";
+  import { inject, computed, ref } from 'vue';
+  //import Backdrop from './Backdrop.vue'; 
+  import AddedItem from './AddedItem.vue'; 
+  import Orders from './Orders.vue';
 
   export default {
     name: 'Header',
     data() {
-        return {
-            logo,
-            menuOpen: false, // Стан бургер-меню
-            basketCount: 0, // Кількість товарів у кошику
-            totalPrice: 0,  // Загальна ціна
+    return {
+        logo,
+        menuOpen: false,
+        basketOpen: false,
+        basketItems: [],
         };
     },
-    methods: {
-        toggleMenu() {
-        this.menuOpen = !this.menuOpen; // Відкриття/закриття меню
-        },
-        toggleBasket() {
-        console.log('Basket toggled');
-        },
+    setup() {
+      const basketState = inject('basketState'); // Стан корзини
+      const addToBasket = inject('addToBasket'); // Функція додавання в корзину
+
+      // Обчислюване значення для загальної вартості з урахуванням знижки
+      const discountedPrice = computed(() => {
+        const discountThreshold = 1000; // Поріг для знижки
+        const discountRate = 0.1; // 10% знижка
+        return basketState.totalPrice >= discountThreshold
+          ? basketState.totalPrice * (1 - discountRate)
+          : basketState.totalPrice;
+      });
+
+      // Обчислюване значення для загальної вартості з доставкою
+      const totalPriceWithDelivery = computed(() => {
+        const deliveryPrice = 50; // Фіксована ціна доставки
+        return discountedPrice.value + deliveryPrice;
+      });
+
+      return {
+        basketState,
+        addToBasket,
+        discountedPrice,
+        totalPriceWithDelivery,
+      };
     },
+    methods: {
+      toggleMenu() {
+        this.menuOpen = !this.menuOpen; // Відкриття/закриття меню
+      },
+      toggleBasket() {
+        this.basketOpen = !this.basketOpen; // Відкриття/закриття корзини
+      },
+      updateQuantity(itemId, quantity) {
+        // Метод для оновлення кількості товарів у корзині
+        const item = this.basketState.basketItems.find((i) => i.id === itemId);
+        if (item) {
+          item.quantity = quantity;
+        }
+        // Перерахунок загальної вартості
+        this.basketState.totalPrice = this.basketState.basketItems.reduce(
+          (sum, i) => sum + i.price * i.quantity,
+          0
+        );
+      },
+      handleAddToBasket(item) {
+      // Перевірка, чи товар уже в корзині
+      const existingItem = this.basketItems.find((basketItem) => basketItem.id === item.id);
+      if (existingItem) {
+        // Якщо товар уже є, збільшуємо його кількість
+        existingItem.quantity += item.quantity;
+      } else {
+        // Якщо товару немає, додаємо його
+        this.basketItems.push(item);
+      }
+    },
+    handleRemoveItem(id) {
+      this.basketItems = this.basketItems.filter((item) => item.id !== id);
+    },
+    handleUpdateQuantity(id, newQuantity) {
+      const item = this.basketItems.find((basketItem) => basketItem.id === id);
+      if (item && newQuantity > 0) {
+        item.quantity = newQuantity;
+      } else {
+        // Видаляємо товар, якщо кількість стає 0
+        this.handleRemoveItem(id);
+      }
+    },
+    },
+    components: { Orders, AddedItem },
+
   }
-  </script>
+</script>
   
   <style scoped>
 .header-container {
@@ -374,6 +460,8 @@
 }
 
 .close-basket {
+  background: none;
+  border: none;
   margin-top: 28px;
   margin-right: -18px;
 }
